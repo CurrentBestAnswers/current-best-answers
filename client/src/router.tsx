@@ -23,7 +23,8 @@ class RouterComp extends React.Component<{}, { hasError: boolean }> {
 
     return (
       <Switch>
-        <Route path="/" component={React.lazy(() => import('./pages/index'))} exact />
+        <Route path="/" component={React.lazy(() => import('./pages/graphs'))} exact />
+        <Route path="/graphs/add" component={React.lazy(() => import('./pages/graphs/add'))} />
         <Route path="/:pid" component={React.lazy(() => import('./pages/[pid]'))} />
         <Route path="*" component={React.lazy(() => import('./pages/404'))} />
       </Switch>
