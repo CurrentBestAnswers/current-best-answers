@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./Graph.module.scss";
+import styles from "./AddGraph.module.scss";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -86,7 +86,14 @@ const AddGraph = ({}: Props) => {
         </RadioGroup>
       </FormControl>
 
-      <Button className={classes.button} size="large" variant="outlined">Create Graph</Button>
+      <Button
+        className={classes.button}
+        size="large"
+        variant="outlined"
+        onClick={() => history.push("/graphs/questions")}
+      >
+        Create Graph
+      </Button>
     </div>
   );
 };

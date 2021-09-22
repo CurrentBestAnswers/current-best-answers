@@ -3,7 +3,7 @@ import styles from "../index.module.scss";
 import Graph from "../../components/Graph";
 import AddGraph from "../../components/AddGraph";
 
-const Graphs = ({}) => {
+const Add = ({}) => {
   return (
     <div className={styles.viewport}>
       <Graph />
@@ -12,4 +12,4 @@ const Graphs = ({}) => {
   );
 };
 
-export default Graphs;
+export default Add;
