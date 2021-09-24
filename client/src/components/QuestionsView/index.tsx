@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import styles from "./Questions.module.scss";
 import TreeView from "@material-ui/lab/TreeView";
 import TreeItem from "@material-ui/lab/TreeItem";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { cloneDeep } from "lodash";
 import {
   Divider,
   makeStyles,
@@ -11,6 +14,7 @@ import {
   MenuItem,
   Typography,
 } from "@material-ui/core";
+import TextDialog from "../TextDialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,6 +42,7 @@ type GraphItem = {
   id: string;
   name: string;
   type: string;
+  isMouseOver: boolean;
   questions?: GraphItem[];
   categories?: GraphItem[];
 };
@@ -50,6 +55,233 @@ const initialContextPos = {
 
 interface Props {}
 
+const initialQuestions: GraphItem[] = [
+  {
+    id: "1",
+    name: "Financial",
+    type: "topic",
+    isMouseOver: false,
+    questions: [
+      {
+        id: "2",
+        name: "What should I do with my money? Invest it? If so, where? What are my options?",
+        type: "question",
+        isMouseOver: false,
+      },
+      {
+        id: "3",
+        name: "What is my cost of living?",
+        type: "question",
+        isMouseOver: false,
+      },
+      {
+        id: "4",
+        name: "Should I accept the job offer to work as a teacher?",
+        type: "question",
+        isMouseOver: false,
+      },
+    ],
+  },
+  {
+    id: "5",
+    name: "Health",
+    type: "topic",
+    isMouseOver: false,
+    categories: [
+      {
+        id: "6",
+        name: "Sleep",
+        type: "topic",
+        isMouseOver: false,
+        questions: [
+          {
+            id: "7",
+            name: "What kind of sleep schedule should I follow?",
+            type: "question",
+            isMouseOver: false,
+          },
+        ],
+      },
+      {
+        id: "8",
+        name: "Nutrition",
+        type: "topic",
+        isMouseOver: false,
+        questions: [
+          {
+            id: "9",
+            name: "What kind of diet should I eat?",
+            type: "question",
+            isMouseOver: false,
+            questions: [
+              {
+                id: "10",
+                name: "Should I eat things with refined oil in them?",
+                type: "question",
+                isMouseOver: false,
+              },
+              {
+                id: "11",
+                name: "Should I include soy in my diet? Is soy problematic to health? ",
+                type: "question",
+                isMouseOver: false,
+              },
+            ],
+          },
+          {
+            id: "12",
+            name: "Should I consume caffeine?",
+            type: "question",
+            isMouseOver: false,
+          },
+          {
+            id: "13",
+            name: "Should I take any supplements? If so, which ones?",
+            type: "question",
+            isMouseOver: false,
+          },
+        ],
+      },
+      {
+        id: "14",
+        name: "Vision",
+        type: "topic",
+        isMouseOver: false,
+        questions: [
+          {
+            id: "15",
+            name: "What kind of diet should I eat?",
+            type: "question",
+            isMouseOver: false,
+            questions: [
+              {
+                id: "16",
+                name: "Should I eat things with refined oil in them?",
+                type: "question",
+                isMouseOver: false,
+              },
+              {
+                id: "17",
+                name: "Should I include soy in my diet? Is soy problematic to health? ",
+                type: "question",
+                isMouseOver: false,
+              },
+            ],
+          },
+          {
+            id: "18",
+            name: "Should I consume caffeine?",
+            type: "question",
+            isMouseOver: false,
+          },
+          {
+            id: "19",
+            name: "Should I take any supplements? If so, which ones?",
+            type: "question",
+            isMouseOver: false,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "20",
+    name: "Stuff I Buy, Own and Use",
+    type: "topic",
+    isMouseOver: false,
+    questions: [
+      {
+        id: "21",
+        name: "What should I ask myself before buying something? What principles / critiera should stuff I buy meet?",
+        type: "question",
+        isMouseOver: false,
+      },
+      {
+        id: "22",
+        name: "Should I own a car? If so, which one?",
+        type: "question",
+        isMouseOver: false,
+        questions: [
+          {
+            id: "23",
+            name: "Where should I get my car serviced? Should I service it myself?",
+            type: "question",
+            isMouseOver: false,
+          },
+          {
+            id: "24",
+            name: "Should I insure my car? If so, what type, and with what company?",
+            type: "question",
+            isMouseOver: false,
+          },
+        ],
+      },
+      {
+        id: "25",
+        name: "Should I own a laptop? If so, which one?",
+        type: "question",
+        isMouseOver: false,
+      },
+      {
+        id: "26",
+        name: "Should I buy, own and use a carbon fibre road bike? If so, which one?",
+        type: "question",
+        isMouseOver: false,
+      },
+    ],
+  },
+];
+
+const defaultExpandedItems = (items: GraphItem[]) => {
+  let expanded = [] as string[];
+
+  items.map((item) => {
+    if (item.questions || item.categories) {
+      expanded.push(item.id);
+    }
+    if (item.categories) {
+      let subExpanded = defaultExpandedItems(item.categories);
+      expanded.push(...subExpanded);
+    }
+    if (item.questions) {
+      let subExpanded = defaultExpandedItems(item.questions);
+      expanded.push(...subExpanded);
+    }
+  });
+
+  return expanded;
+};
+
+const findQuestion = (
+  items: GraphItem[],
+  findId: string
+): GraphItem | undefined => {
+  let found = undefined;
+
+  for (let item of items) {
+    if (item.id === findId) {
+      found = item;
+      break;
+    }
+    if (item.categories) {
+      let question = findQuestion(item.categories, findId);
+      if (question) {
+        found = question;
+        break;
+      }
+    }
+    if (item.questions) {
+      let question = findQuestion(item.questions, findId);
+      if (question) {
+        found = question;
+        break;
+      }
+    }
+  }
+
+  return found;
+};
+
 const QuestionsView = ({}: Props) => {
   const { t } = useTranslation();
   const classes = useStyles();
@@ -57,175 +289,14 @@ const QuestionsView = ({}: Props) => {
   const [contextPos, setContextPos] = useState(initialContextPos);
   const [showBranchQs, setShowBranchQs] = useState(false);
   const [showArchive, setShowArchive] = useState(false);
-
-  const questions: GraphItem[] = [
-    {
-      id: "1",
-      name: "Financial",
-      type: "topic",
-      questions: [
-        {
-          id: "2",
-          name: "What should I do with my money? Invest it? If so, where? What are my options?",
-          type: "question",
-        },
-        {
-          id: "3",
-          name: "What is my cost of living?",
-          type: "question",
-        },
-        {
-          id: "4",
-          name: "Should I accept the job offer to work as a teacher?",
-          type: "question",
-        },
-      ],
-    },
-    {
-      id: "5",
-      name: "Health",
-      type: "topic",
-      categories: [
-        {
-          id: "6",
-          name: "Sleep",
-          type: "topic",
-          questions: [
-            {
-              id: "7",
-              name: "What kind of sleep schedule should I follow?",
-              type: "question",
-            },
-          ],
-        },
-        {
-          id: "8",
-          name: "Nutrition",
-          type: "topic",
-          questions: [
-            {
-              id: "9",
-              name: "What kind of diet should I eat?",
-              type: "question",
-              questions: [
-                {
-                  id: "10",
-                  name: "Should I eat things with refined oil in them?",
-                  type: "question",
-                },
-                {
-                  id: "11",
-                  name: "Should I include soy in my diet? Is soy problematic to health? ",
-                  type: "question",
-                },
-              ],
-            },
-            {
-              id: "12",
-              name: "Should I consume caffeine?",
-              type: "question",
-            },
-            {
-              id: "13",
-              name: "Should I take any supplements? If so, which ones?",
-              type: "question",
-            },
-          ],
-        },
-        {
-          id: "14",
-          name: "Vision",
-          type: "topic",
-          questions: [
-            {
-              id: "15",
-              name: "What kind of diet should I eat?",
-              type: "question",
-              questions: [
-                {
-                  id: "16",
-                  name: "Should I eat things with refined oil in them?",
-                  type: "question",
-                },
-                {
-                  id: "17",
-                  name: "Should I include soy in my diet? Is soy problematic to health? ",
-                  type: "question",
-                },
-              ],
-            },
-            {
-              id: "18",
-              name: "Should I consume caffeine?",
-              type: "question",
-            },
-            {
-              id: "19",
-              name: "Should I take any supplements? If so, which ones?",
-              type: "question",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: "20",
-      name: "Stuff I Buy, Own and Use",
-      type: "topic",
-      questions: [
-        {
-          id: "21",
-          name: "What should I ask myself before buying something? What principles / critiera should stuff I buy meet?",
-          type: "question",
-        },
-        {
-          id: "22",
-          name: "Should I own a car? If so, which one?",
-          type: "question",
-          questions: [
-            {
-              id: "23",
-              name: "Where should I get my car serviced? Should I service it myself?",
-              type: "question",
-            },
-            {
-              id: "24",
-              name: "Should I insure my car? If so, what type, and with what company?",
-              type: "question",
-            },
-          ],
-        },
-        {
-          id: "25",
-          name: "Should I own a laptop? If so, which one?",
-          type: "question",
-        },
-        {
-          id: "26",
-          name: "Should I buy, own and use a carbon fibre road bike? If so, which one?",
-          type: "question",
-        },
-      ],
-    },
-  ];
+  const [showQuestionDialog, setQuestionDialog] = useState(false);
+  const [showTopicDialog, setTopicDialog] = useState(false);
+  const [questions, setQuestions] = useState(initialQuestions);
+  const [expanded, setExpanded] = useState(
+    defaultExpandedItems(initialQuestions)
+  );
 
   const menuItems = [
-    {
-      id: "m1",
-      name: "Create Topic",
-      divider: false,
-      onClick: () => {
-        setContextPos(initialContextPos);
-      },
-    },
-    {
-      id: "m2",
-      name: "Create Question",
-      divider: false,
-      onClick: () => {
-        setContextPos(initialContextPos);
-      },
-    },
     {
       id: "m3",
       name: `${showBranchQs ? "Hide" : "Show"} Branch Questions`,
@@ -243,6 +314,30 @@ const QuestionsView = ({}: Props) => {
       },
     },
   ];
+
+  if (!contextPos.item || contextPos.item.type === "topic") {
+    menuItems.unshift({
+      id: "m1",
+      name: "Create Topic",
+      divider: false,
+      onClick: () => {
+        setContextPos(initialContextPos);
+        setTopicDialog(true);
+      },
+    });
+  }
+
+  if (contextPos.item) {
+    menuItems.unshift({
+      id: "m2",
+      name: "Create Question",
+      divider: false,
+      onClick: () => {
+        setContextPos(initialContextPos);
+        setQuestionDialog(true);
+      },
+    });
+  }
 
   if (contextPos.item) {
     menuItems.push(
@@ -274,8 +369,19 @@ const QuestionsView = ({}: Props) => {
   }
 
   const GraphTreeItem = (item: GraphItem) => {
+    let icon = <></>;
+    let isExpanded = expanded.find((value) => value === item.id);
+    if (item.categories || item.questions) {
+      if (isExpanded) {
+        icon = <ExpandMoreIcon />;
+      } else if (item.isMouseOver) {
+        icon = <ChevronRightIcon />;
+      }
+    }
+
     return (
       <TreeItem
+        icon={icon}
         nodeId={item.id}
         classes={{
           root: classes.treeItemRoot,
@@ -290,6 +396,22 @@ const QuestionsView = ({}: Props) => {
             mouseY: event.clientY - 4,
             item,
           });
+        }}
+        onMouseEnter={() => {
+          let questionsCopy = cloneDeep(questions);
+          let question = findQuestion(questionsCopy, item.id);
+          if (question) {
+            question.isMouseOver = true;
+            setQuestions(questionsCopy);
+          }
+        }}
+        onMouseLeave={() => {
+          let questionsCopy = cloneDeep(questions);
+          let question = findQuestion(questionsCopy, item.id);
+          if (question) {
+            question.isMouseOver = false;
+            setQuestions(questionsCopy);
+          }
         }}
       >
         {item.questions &&
@@ -321,7 +443,13 @@ const QuestionsView = ({}: Props) => {
       <Typography className={classes.questionsHeading} variant="h6">
         Questions
       </Typography>
-      <TreeView className={classes.questionsTree}>
+      <TreeView
+        className={classes.questionsTree}
+        expanded={expanded}
+        onNodeToggle={(event, nodeIds) => {
+          setExpanded(nodeIds);
+        }}
+      >
         {questions &&
           questions.map((item) => (
             <GraphTreeItem key={`graph_${item.id}`} {...item} />
@@ -329,7 +457,9 @@ const QuestionsView = ({}: Props) => {
       </TreeView>
       <Menu
         keepMounted
-        open={contextPos.mouseY !== null}
+        open={
+          contextPos.mouseY !== null && !showQuestionDialog && !showTopicDialog
+        }
         onClose={() => {
           setContextPos(initialContextPos);
         }}
@@ -350,6 +480,28 @@ const QuestionsView = ({}: Props) => {
         })}
         ;
       </Menu>
+      {showTopicDialog && (
+        <TextDialog
+          buttonText="Create Topic"
+          labelText="Topic"
+          onClose={() => setTopicDialog(false)}
+          onOkay={(topic) => {
+            console.log(topic);
+            setTopicDialog(false);
+          }}
+        />
+      )}
+      {showQuestionDialog && (
+        <TextDialog
+          buttonText="Create Question"
+          labelText="Question"
+          onClose={() => setQuestionDialog(false)}
+          onOkay={(question) => {
+            console.log(question);
+            setQuestionDialog(false);
+          }}
+        />
+      )}
     </div>
   );
 };
