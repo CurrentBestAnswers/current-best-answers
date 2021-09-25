@@ -3,6 +3,15 @@ body{
   margin: 0px;
 }
 
+.Resizer {
+  background: #000;
+  opacity: 0.5;
+  z-index: 1;
+  width: 3px;
+  cursor: col-resize;
+  margin: 0 5px;
+}
+
 @mixin flex-collapse {
   display: flex;
   flex-direction: column;

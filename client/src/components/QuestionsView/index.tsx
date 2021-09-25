@@ -18,7 +18,6 @@ import TextDialog from "../TextDialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    marginTop: 20,
     cursor: "context-menu",
     height: "100%",
   },

@@ -1,11 +1,11 @@
 import React from "react";
-import QuestionsView from "../../components/QuestionsView";
+import QnAView from "../../components/QnAView";
 import styles from "../index.module.scss";
 
 const Questions = ({}) => {
   return (
     <div className={styles.viewport}>
-      <QuestionsView />
+      <QnAView />
     </div>
   );
 };

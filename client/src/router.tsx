@@ -1,5 +1,9 @@
 import React from 'react'
 import { Route, Switch } from 'react-router-dom'
+import Custom404 from './pages/404'
+import Graphs from './pages/graphs'
+import Add from './pages/graphs/add'
+import Questions from './pages/graphs/questions'
 
 class RouterComp extends React.Component<{}, { hasError: boolean }> {
   static getDerivedStateFromError() {
@@ -23,10 +27,10 @@ class RouterComp extends React.Component<{}, { hasError: boolean }> {
 
     return (
       <Switch>
-        <Route path="/" component={React.lazy(() => import('./pages/graphs'))} exact />
-        <Route path="/graphs/add" component={React.lazy(() => import('./pages/graphs/add'))} />
-        <Route path="/graphs/questions" component={React.lazy(() => import('./pages/graphs/questions'))} />
-        <Route path="*" component={React.lazy(() => import('./pages/404'))} />
+        <Route path="/" component={Graphs} exact />
+        <Route path="/graphs/add" component={Add} />
+        <Route path="/graphs/questions" component={Questions} />
+        <Route path="*" component={Custom404} />
       </Switch>
     )
   }
