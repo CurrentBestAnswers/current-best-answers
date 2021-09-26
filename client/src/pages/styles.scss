@@ -10,3 +10,9 @@ body {
 .reflex-container > .reflex-element {
   overflow: hidden !important;
 }
+
+.DraftEditor-root,
+.DraftEditor-editorContainer,
+.public-DraftEditor-content {
+  height: 100%;
+}

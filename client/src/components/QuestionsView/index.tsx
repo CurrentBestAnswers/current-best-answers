@@ -21,12 +21,19 @@ const useStyles = makeStyles((theme) => ({
   root: {
     cursor: "context-menu",
   },
+  topicHeading: {
+    fontSize: "1.25rem",
+    color: "#888",
+    marginLeft: 10,
+    marginTop: 10,
+  },
   questionsHeading: {
-    marginLeft: 20,
+    marginLeft: 30,
     marginTop: 20,
   },
   questionsTree: {
-    marginLeft: 20,
+    marginLeft: 30,
+    marginTop: 20,
   },
   treeItemRoot: {
     marginTop: 10,
@@ -438,7 +445,7 @@ const QuestionsView = ({}: Props) => {
         });
       }}
     >
-      <Typography variant="h5">Personal</Typography>
+      <Typography className={classes.topicHeading}>Personal</Typography>
       <Typography className={classes.questionsHeading} variant="h6">
         Questions
       </Typography>

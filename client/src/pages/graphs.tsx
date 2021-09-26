@@ -1,7 +1,6 @@
 import React from "react";
-import Graph from "../components/Graph";
-
 import styles from "./index.module.scss";
+import Graph from "../components/Graph";
 
 const Graphs = ({}) => {
   return (
