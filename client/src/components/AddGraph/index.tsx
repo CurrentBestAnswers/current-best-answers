@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "./AddGraph.module.scss";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -14,6 +13,8 @@ import {
 } from "@material-ui/core";
 import LockIcon from "@material-ui/icons/Lock";
 import GroupIcon from "@material-ui/icons/Group";
+
+import styles from "./AddGraph.module.scss";
 
 const useStyles = makeStyles((theme) => ({
   root: {

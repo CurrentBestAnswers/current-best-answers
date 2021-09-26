@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import styles from "./Questions.module.scss";
 import TreeView from "@material-ui/lab/TreeView";
 import TreeItem from "@material-ui/lab/TreeItem";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -16,10 +15,11 @@ import {
 } from "@material-ui/core";
 import TextDialog from "../TextDialog";
 
+import styles from "./Questions.module.scss";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     cursor: "context-menu",
-    height: "100%",
   },
   questionsHeading: {
     marginLeft: 20,

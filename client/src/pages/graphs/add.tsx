@@ -1,7 +1,8 @@
 import React from "react";
-import styles from "../index.module.scss";
 import Graph from "../../components/Graph";
 import AddGraph from "../../components/AddGraph";
+
+import styles from "../index.module.scss";
 
 const Add = ({}) => {
   return (

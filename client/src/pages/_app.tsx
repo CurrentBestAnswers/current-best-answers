@@ -7,9 +7,10 @@ import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 import theme from '../../theme'
 import reducers from '../reducers'
-import './styles.scss'
 import { restoreState } from '@xrengine/client-core/src/persisted.store'
 import RouterComp from '../router'
+
+import './styles.scss'
 
 const App = (): any => {
   const dispatch = useDispatch()

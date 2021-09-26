@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "./Graph.module.scss";
 import { Dispatch } from "redux";
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
@@ -15,6 +14,8 @@ import {
 import LockIcon from "@material-ui/icons/Lock";
 import GroupIcon from "@material-ui/icons/Group";
 import AddIcon from '@material-ui/icons/Add';
+
+import styles from "./Graph.module.scss";
 
 const useStyles = makeStyles((theme) => ({
   root: {

@@ -1,8 +1,9 @@
 import React from "react";
-import styles from "./AnswersView.module.scss";
 import { makeStyles, Typography } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+
+import styles from "./AnswersView.module.scss";
 
 const useStyles = makeStyles((theme) => ({
   root: {

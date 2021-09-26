@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import styles from "./QnAView.module.scss";
 import { IconButton, makeStyles } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import QuestionsView from "../QuestionsView";
-import SplitPane, { Size } from "react-split-pane";
+import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
 import AnswersView from "../AnswersView";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+
+import "react-reflex/styles.css";
+import styles from "./QnAView.module.scss";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,17 +49,11 @@ const QnAView = ({}: Props) => {
   const classes = useStyles();
   const history = useHistory();
   const [layout, setLayout] = useState(LayoutState.Both);
-  const [size, setSize] = useState<Size>("50%");
 
   return (
-    <SplitPane
-      className={classes.root}
-      split="vertical"
-      size={layout === LayoutState.Both ? size : "100%"}
-      onChange={(size) => setSize(size)}
-    >
+    <ReflexContainer className={classes.root} orientation="vertical">
       {layout !== LayoutState.Answer && (
-        <div className={classes.paneLayout}>
+        <ReflexElement className={classes.paneLayout}>
           <IconButton
             className={classes.leftIcon}
             onClick={() => {
@@ -73,10 +69,13 @@ const QnAView = ({}: Props) => {
           <div className={classes.paneContent}>
             <QuestionsView />
           </div>
-        </div>
+        </ReflexElement>
       )}
+
+      {layout === LayoutState.Both && <ReflexSplitter />}
+
       {layout !== LayoutState.Question && (
-        <div className={classes.paneLayout}>
+        <ReflexElement className={classes.paneLayout}>
           <IconButton
             className={classes.rightIcon}
             onClick={() => {
@@ -92,9 +91,9 @@ const QnAView = ({}: Props) => {
           <div className={classes.paneContent}>
             <AnswersView />
           </div>
-        </div>
+        </ReflexElement>
       )}
-    </SplitPane>
+    </ReflexContainer>
   );
 };
 

@@ -1,8 +1,9 @@
 import React from "react";
-import styles from "./ResponseView.module.scss";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { makeStyles, Typography } from "@material-ui/core";
+
+import styles from "./ResponseView.module.scss";
 
 const useStyles = makeStyles((theme) => ({
   root: {
