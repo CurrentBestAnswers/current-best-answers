@@ -9,6 +9,7 @@ import reducers from '../reducers'
 import './styles.scss'
 import { restoreState } from '@xrengine/client-core/src/persisted.store'
 import RouterComp from '../router'
+import Header from '../components/Header'
 
 const App = (): any => {
   const dispatch = useDispatch()
@@ -28,6 +29,7 @@ const App = (): any => {
         />
       </Helmet>
       <ThemeProvider theme={theme}>
+        <Header />
         <RouterComp />
       </ThemeProvider>
     </>
