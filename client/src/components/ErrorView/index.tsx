@@ -1,5 +1,5 @@
 import { Box, Button, makeStyles, Typography } from "@material-ui/core";
-import React from "react";
+import React, { ReactElement } from "react";
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 
 const useStyles = makeStyles((theme) => ({
@@ -28,6 +28,10 @@ interface ErrorViewProps {
    */
   error: string;
   /**
+   * Error icon.
+   */
+  icon?: ReactElement;
+  /**
    * Retry button text.
    */
   retryText?: string;
@@ -41,11 +45,11 @@ const ErrorView: React.FunctionComponent<ErrorViewProps> = (
   Props: ErrorViewProps
 ) => {
   const classes = useStyles();
-  const { error, retryText, onRetry } = Props;
+  const { error, icon, retryText, onRetry } = Props;
 
   return (
     <Box className={classes.root}>
-      <ErrorOutlineIcon className={classes.icon} />
+      {icon ? icon : <ErrorOutlineIcon className={classes.icon} />}
       <Typography className={classes.message}>{error}</Typography>
       {onRetry && (
         <Button variant="outlined" onClick={onRetry}>

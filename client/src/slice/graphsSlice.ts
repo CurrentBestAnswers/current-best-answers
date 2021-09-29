@@ -255,7 +255,7 @@ export const graphsSlice = createSlice({
     ) => {
       let graph = getGraph(state.graphs, action.payload.graphId);
       if (graph) {
-        let graphItem = findGraphItem(graph.data, action.payload.id);
+        let graphItem = getGraphItem(graph.data, action.payload.id);
         if (graphItem) {
           graphItem.isMouseOver = action.payload.isMouseOver;
         }
@@ -268,7 +268,7 @@ export const getGraph = (graphs: Graph[], id: string) =>
   graphs.find((graph) => graph.id === id);
 
 //TODO: This should be re written with reduce()
-export const findGraphItem = (
+export const getGraphItem = (
   items: GraphItem[],
   findId: string
 ): GraphItem | undefined => {
@@ -280,14 +280,14 @@ export const findGraphItem = (
       break;
     }
     if (item.topics) {
-      let question = findGraphItem(item.topics, findId);
+      let question = getGraphItem(item.topics, findId);
       if (question) {
         found = question;
         break;
       }
     }
     if (item.questions) {
-      let question = findGraphItem(item.questions, findId);
+      let question = getGraphItem(item.questions, findId);
       if (question) {
         found = question;
         break;

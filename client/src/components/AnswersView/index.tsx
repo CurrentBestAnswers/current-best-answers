@@ -8,7 +8,13 @@ import {
 } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import MUIRichTextEditor from "mui-rte";
+import queryString from "query-string";
+import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer";
+import ErrorView from "../ErrorView";
+import { RootState } from "../../store";
+import { getGraphItem, Graph } from "../../slice/graphsSlice";
 
 import styles from "./AnswersView.module.scss";
 
@@ -29,6 +35,10 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     marginLeft: 50,
     marginTop: 20,
+  },
+  errorIcon: {
+    color: "gray",
+    fontSize: 50,
   },
 }));
 
@@ -59,18 +69,41 @@ Object.assign(defaultTheme, {
   },
 });
 
-interface Props {}
+interface Props {
+  graph: Graph;
+}
 
-const AnswersView = ({}: Props) => {
+const AnswersView = ({ graph }: Props) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const history = useHistory();
   const [showAnswerToolBar, setAnswerToolBar] = useState(false);
+  const parsedQs = queryString.parse(history.location.search);
+  let questionId =
+    parsedQs && parsedQs.question ? parsedQs.question.toString() : "";
+
+  const question = useSelector((state: RootState) => {
+    if (questionId) {
+      let selectedQuestion = getGraphItem(graph.data, questionId);
+      return selectedQuestion;
+    }
+
+    return undefined;
+  });
+
+  if (!question) {
+    return (
+      <ErrorView
+        error="Please select a question"
+        icon={<QuestionAnswerIcon className={classes.errorIcon} />}
+      />
+    );
+  }
 
   return (
     <div className={classes.root}>
       <Typography variant="h6" className={classes.questionHeading}>
-        Should I own a car? If so, which one?
+        {question.name}
       </Typography>
       <Typography className={classes.cbaHeading}>
         Current Best Answer

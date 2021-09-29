@@ -1,12 +1,18 @@
 import React, { useState } from "react";
 import { IconButton, makeStyles } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import QuestionsView from "../QuestionsView";
 import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
-import AnswersView from "../AnswersView";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import queryString from "query-string";
+import ErrorView from "../ErrorView";
+import QuestionsView from "../QuestionsView";
+import AnswersView from "../AnswersView";
+import { getGraph } from "../../slice/graphsSlice";
+import { Routes } from "../../router";
+import { RootState } from "../../store";
 
 import "react-reflex/styles.css";
 import styles from "./QnAView.module.scss";
@@ -49,6 +55,28 @@ const QnAView = ({}: Props) => {
   const classes = useStyles();
   const history = useHistory();
   const [layout, setLayout] = useState(LayoutState.Both);
+  
+  const parsedQs = queryString.parse(history.location.search);
+  let graphId = parsedQs && parsedQs.graph ? parsedQs.graph.toString() : "";
+
+  const graph = useSelector((state: RootState) => {
+    if (graphId) {
+      let selectedGraph = getGraph(state.graph.graphs, graphId);
+      return selectedGraph;
+    }
+
+    return undefined;
+  });
+
+  if (!graph) {
+    return (
+      <ErrorView
+        error="Please select a graph first"
+        retryText="All Graphs"
+        onRetry={() => history.push(Routes.Home)}
+      />
+    );
+  }
 
   return (
     <ReflexContainer className={classes.root} orientation="vertical">
@@ -67,7 +95,7 @@ const QnAView = ({}: Props) => {
             <ChevronLeftIcon />
           </IconButton>
           <div className={classes.paneContent}>
-            <QuestionsView />
+            <QuestionsView graph={graph} />
           </div>
         </ReflexElement>
       )}
@@ -89,7 +117,7 @@ const QnAView = ({}: Props) => {
             <ChevronRightIcon />
           </IconButton>
           <div className={classes.paneContent}>
-            <AnswersView />
+            <AnswersView graph={graph} />
           </div>
         </ReflexElement>
       )}

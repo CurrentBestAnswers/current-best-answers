@@ -7,7 +7,6 @@ import LockIcon from "@material-ui/icons/Lock";
 import GroupIcon from "@material-ui/icons/Group";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import queryString from "query-string";
 import {
   Divider,
   makeStyles,
@@ -23,12 +22,11 @@ import {
   toggleShowBranchQs,
 } from "../../slice/configurationSlice";
 import {
-  getGraph,
+  Graph,
   GraphItem,
   GraphItemType,
   setMouseOver,
 } from "../../slice/graphsSlice";
-import ErrorView from "../ErrorView";
 import { Routes } from "../../router";
 
 import styles from "./Questions.module.scss";
@@ -89,33 +87,12 @@ const defaultExpandedItems = (items: GraphItem[]) => {
   return expanded;
 };
 
-interface Props {}
+interface Props {
+  graph: Graph;
+}
 
-const QuestionsView = ({}: Props) => {
+const QuestionsView = ({ graph }: Props) => {
   const history = useHistory();
-
-  const parsedQs = queryString.parse(history.location.search);
-  let graphId = parsedQs && parsedQs.graph ? parsedQs.graph.toString() : "";
-
-  const graph = useSelector((state: RootState) => {
-    if (graphId) {
-      let selectedGraph = getGraph(state.graph.graphs, graphId);
-      return selectedGraph;
-    }
-
-    return undefined;
-  });
-
-  if (!graph) {
-    return (
-      <ErrorView
-        error="Please select a graph first."
-        retryText="All Graphs"
-        onRetry={() => history.push(Routes.Home)}
-      />
-    );
-  }
-
   const { t } = useTranslation();
   const classes = useStyles();
   const { showBranchQs, showArchive } = useSelector(
@@ -229,10 +206,22 @@ const QuestionsView = ({}: Props) => {
           });
         }}
         onMouseEnter={() =>
-          dispatch(setMouseOver({ id: item.id, graphId, isMouseOver: true }))
+          dispatch(
+            setMouseOver({ id: item.id, graphId: graph.id, isMouseOver: true })
+          )
         }
         onMouseLeave={() =>
-          dispatch(setMouseOver({ id: item.id, graphId, isMouseOver: false }))
+          dispatch(
+            setMouseOver({ id: item.id, graphId: graph.id, isMouseOver: false })
+          )
+        }
+        onClick={
+          item.type === GraphItemType.Topic
+            ? undefined
+            : () =>
+                history.push(
+                  `${Routes.Questions}?graph=${graph.id}&question=${item.id}`
+                )
         }
       >
         {item.questions &&
