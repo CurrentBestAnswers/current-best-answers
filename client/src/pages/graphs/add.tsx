@@ -1,12 +1,20 @@
 import React from "react";
 import Graph from "../../components/Graph";
 import AddGraph from "../../components/AddGraph";
+import { makeStyles } from "@material-ui/core";
 
-import styles from "../index.module.scss";
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: 300,
+    margin: "20px auto",
+  },
+}));
 
 const Add = ({}) => {
+  const classes = useStyles();
+
   return (
-    <div className={styles.viewport}>
+    <div className={classes.root}>
       <Graph />
       <AddGraph />
     </div>

@@ -1,5 +1,4 @@
 import React from "react";
-import { Dispatch } from "redux";
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import {
@@ -18,14 +17,10 @@ import AddIcon from '@material-ui/icons/Add';
 import styles from "./Graph.module.scss";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    margin: "20px auto",
-  },
   listItem: {
     border: "0.5px solid #D3D3D3",
     borderRadius: 5,
     marginTop: 10,
-    width: 250,
   },
   listItemText: {
   },
@@ -60,7 +55,7 @@ const Graph = ({}: Props) => {
   ];
 
   return (
-    <div className={classes.root}>
+    <>
       <Typography variant="h5">Graphs</Typography>
 
       <List dense>
@@ -90,7 +85,7 @@ const Graph = ({}: Props) => {
       <IconButton className={classes.iconButton} onClick={() => history.push('/graphs/add')}>
         <AddIcon />
       </IconButton>
-    </div>
+    </>
   );
 };
 

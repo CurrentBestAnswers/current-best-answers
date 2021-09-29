@@ -17,14 +17,11 @@ import GroupIcon from "@material-ui/icons/Group";
 import styles from "./AddGraph.module.scss";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    margin: "20px auto",
-  },
   heading: {
+    marginTop: 30,
     marginBottom: 20,
   },
   textField: {
-    width: 250,
   },
   radioGroup: {
     marginTop: 10,
@@ -38,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 20,
   },
   button: {
-    width: 250,
     marginTop: 20,
   },
 }));
@@ -51,13 +47,15 @@ const AddGraph = ({}: Props) => {
   const history = useHistory();
 
   return (
-    <div className={classes.root}>
+    <>
       <Typography className={classes.heading} variant="h5">
         Create New Graph
       </Typography>
 
       <TextField
         className={classes.textField}
+        fullWidth
+        size="small"
         label="Graph Name"
         variant="outlined"
       />
@@ -95,7 +93,7 @@ const AddGraph = ({}: Props) => {
       >
         Create Graph
       </Button>
-    </div>
+    </>
   );
 };
 

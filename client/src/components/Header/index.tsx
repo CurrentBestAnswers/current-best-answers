@@ -64,9 +64,10 @@ const Header = ({}: Props) => {
         </Typography>
 
         <Autocomplete
-          disableClearable
-          popupIcon={null}
           className={classes.searchBox}
+          popupIcon={null}
+          closeIcon={null}
+          disableClearable
           options={top100Films.map((option) => option.title)}
           renderInput={(params) => (
             <TextField
@@ -75,7 +76,6 @@ const Header = ({}: Props) => {
               label="Search"
               margin="normal"
               variant="outlined"
-              InputProps={{ ...params.InputProps, type: "search" }}
             />
           )}
         />
