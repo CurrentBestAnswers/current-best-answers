@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   IconButton,
@@ -10,9 +10,12 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
+import { useSelector } from "react-redux";
 import LockIcon from "@material-ui/icons/Lock";
 import GroupIcon from "@material-ui/icons/Group";
-import AddIcon from '@material-ui/icons/Add';
+import AddIcon from "@material-ui/icons/Add";
+import { RootState } from "../../store";
+import { Routes } from "../../router";
 
 import styles from "./Graph.module.scss";
 
@@ -21,8 +24,6 @@ const useStyles = makeStyles((theme) => ({
     border: "0.5px solid #D3D3D3",
     borderRadius: 5,
     marginTop: 10,
-  },
-  listItemText: {
   },
   listItemIcon: {
     fontSize: 16,
@@ -39,20 +40,7 @@ const Graph = ({}: Props) => {
   const classes = useStyles();
   const history = useHistory();
 
-  const graphs = [
-    {
-      name: "Personal",
-      isPrivate: true,
-    },
-    {
-      name: "Work",
-      isPrivate: true,
-    },
-    {
-      name: "Public",
-      isPrivate: false,
-    },
-  ];
+  const { graphs } = useSelector((state: RootState) => state.graph);
 
   return (
     <>
@@ -62,14 +50,14 @@ const Graph = ({}: Props) => {
         {graphs.map((item, index) => {
           return (
             <ListItem
-              key={`graph-${index}`}
+              key={item.id}
               className={classes.listItem}
               button
+              onClick={() =>
+                history.push(`${Routes.Questions}?graph=${item.id}`)
+              }
             >
-              <ListItemText
-                className={classes.listItemText}
-                primary={item.name}
-              />
+              <ListItemText primary={item.name} />
               <ListItemSecondaryAction>
                 {item.isPrivate ? (
                   <LockIcon className={classes.listItemIcon} />
@@ -81,8 +69,11 @@ const Graph = ({}: Props) => {
           );
         })}
       </List>
-      
-      <IconButton className={classes.iconButton} onClick={() => history.push('/graphs/add')}>
+
+      <IconButton
+        className={classes.iconButton}
+        onClick={() => history.push(Routes.AddGraph)}
+      >
         <AddIcon />
       </IconButton>
     </>

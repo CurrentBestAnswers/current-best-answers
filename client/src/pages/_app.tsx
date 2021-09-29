@@ -1,16 +1,16 @@
-import { configureStore } from "@xrengine/client-core/src/store";
-import React, { useEffect, useCallback } from "react";
+import React from "react";
 import { Helmet } from "react-helmet";
 import { Provider, useDispatch } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import theme from "../../theme";
-import reducers from "../reducers";
-import "./styles.scss";
-import { restoreState } from "@xrengine/client-core/src/persisted.store";
 import RouterComp from "../router";
 import Header from "../components/Header";
 import { makeStyles } from "@material-ui/core";
+import { store } from "../store";
+import { SnackbarProvider } from "notistack";
+
+import "./styles.scss";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,12 +24,6 @@ const App = (): any => {
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  const initApp = useCallback(() => {
-    dispatch(restoreState());
-  }, []);
-
-  useEffect(initApp, []);
-
   return (
     <>
       <Helmet>
@@ -39,10 +33,12 @@ const App = (): any => {
         />
       </Helmet>
       <ThemeProvider theme={theme}>
-        <Header />
-        <div className={classes.root}>
-          <RouterComp />
-        </div>
+        <SnackbarProvider>
+          <Header />
+          <div className={classes.root}>
+            <RouterComp />
+          </div>
+        </SnackbarProvider>
       </ThemeProvider>
     </>
   );
@@ -50,7 +46,7 @@ const App = (): any => {
 
 const StoreProvider = () => {
   return (
-    <Provider store={configureStore(reducers)}>
+    <Provider store={store}>
       <BrowserRouter>
         <App />
       </BrowserRouter>

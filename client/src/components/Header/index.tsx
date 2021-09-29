@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Routes } from "../../router";
 
 import styles from "./Header.module.scss";
 
@@ -24,6 +25,9 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+  },
+  pointer: {
+    cursor: "pointer",
   },
   menuPopup: {
     padding: 15,
@@ -60,7 +64,12 @@ const Header = ({}: Props) => {
     <AppBar className={classes.root} position="static">
       <Toolbar>
         <Typography className={classes.title} variant="h6">
-          Current Best Answers
+          <span
+            className={classes.pointer}
+            onClick={() => history.push(Routes.Home)}
+          >
+            Current Best Answers
+          </span>
         </Typography>
 
         <Autocomplete
@@ -107,7 +116,14 @@ const Header = ({}: Props) => {
               <Typography>Hanzla Mateen</Typography>
             </div>
             <MenuItem onClick={handleClose}>Settings</MenuItem>
-            <MenuItem onClick={handleClose}>All Graphs</MenuItem>
+            <MenuItem
+              onClick={() => {
+                history.push(Routes.Home);
+                setAnchorEl(undefined);
+              }}
+            >
+              All Graphs
+            </MenuItem>
             <MenuItem onClick={handleClose}>Sign Out</MenuItem>
           </div>
         </Popover>

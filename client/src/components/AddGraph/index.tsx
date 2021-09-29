@@ -1,5 +1,4 @@
-import React from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -13,6 +12,9 @@ import {
 } from "@material-ui/core";
 import LockIcon from "@material-ui/icons/Lock";
 import GroupIcon from "@material-ui/icons/Group";
+import { useDispatch } from "react-redux";
+import { addNewGraph } from "../../slice/graphsSlice";
+import { useSnackbar } from "notistack";
 
 import styles from "./AddGraph.module.scss";
 
@@ -21,8 +23,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 30,
     marginBottom: 20,
   },
-  textField: {
-  },
+  textField: {},
   radioGroup: {
     marginTop: 10,
     display: "block",
@@ -42,9 +43,15 @@ const useStyles = makeStyles((theme) => ({
 interface Props {}
 
 const AddGraph = ({}: Props) => {
+  const defaultName = "";
+  const defaultIsPrivate = true;
+
   const { t } = useTranslation();
   const classes = useStyles();
-  const history = useHistory();
+  const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
+  const [name, setName] = useState(defaultName);
+  const [isPrivate, setIsPrivate] = useState(defaultIsPrivate);
 
   return (
     <>
@@ -58,10 +65,17 @@ const AddGraph = ({}: Props) => {
         size="small"
         label="Graph Name"
         variant="outlined"
+        value={name}
+        onChange={(event) => setName(event.target.value)}
       />
 
       <FormControl className={classes.radioGroup} component="fieldset">
-        <RadioGroup defaultValue="private">
+        <RadioGroup
+          value={isPrivate ? "private" : "public"}
+          onChange={(event) =>
+            setIsPrivate(event.target.value === "private" ? true : false)
+          }
+        >
           <FormControlLabel
             value="private"
             control={<Radio color="default" />}
@@ -89,7 +103,38 @@ const AddGraph = ({}: Props) => {
         className={classes.button}
         size="large"
         variant="outlined"
-        onClick={() => history.push("/graphs/questions")}
+        onClick={() => {
+          if (!name) {
+            enqueueSnackbar(`Please provide name for graph`, {
+              variant: "error",
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "center",
+              },
+            });
+            return;
+          }
+
+          dispatch(
+            addNewGraph({
+              id: name.toLowerCase().replaceAll(" ", ""),
+              name,
+              isPrivate,
+              data: []
+            })
+          );
+
+          setName(defaultName);
+          setIsPrivate(defaultIsPrivate);
+
+          enqueueSnackbar(`Successfully added ${name} graph`, {
+            variant: "success",
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "center",
+            },
+          });
+        }}
       >
         Create Graph
       </Button>

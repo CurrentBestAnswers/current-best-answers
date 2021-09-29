@@ -10,7 +10,7 @@ class RouterComp extends React.Component<{}, { hasError: boolean }> {
     return { hasError: true }
   }
 
-  constructor(props) {
+  constructor(props: any) {
     super(props)
 
     this.state = { hasError: false }
@@ -27,13 +27,20 @@ class RouterComp extends React.Component<{}, { hasError: boolean }> {
 
     return (
       <Switch>
-        <Route path="/" component={Graphs} exact />
-        <Route path="/graphs/add" component={Add} />
-        <Route path="/graphs/questions" component={Questions} />
-        <Route path="*" component={Custom404} />
+        <Route path={Routes.Home} component={Graphs} exact />
+        <Route path={Routes.AddGraph} component={Add} />
+        <Route path={Routes.Questions} component={Questions} />
+        <Route path={Routes.Error} component={Custom404} />
       </Switch>
     )
   }
 }
+
+export const Routes = {
+  Home: "/",
+  Error: "*",
+  AddGraph: "/add",
+  Questions: "/questions"
+} 
 
 export default RouterComp
