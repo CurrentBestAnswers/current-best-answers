@@ -267,36 +267,22 @@ export const graphsSlice = createSlice({
 export const getGraph = (graphs: Graph[], id: string) =>
   graphs.find((graph) => graph.id === id);
 
-//TODO: This should be re written with reduce()
+/**
+ * https://stackoverflow.com/a/53390570
+ */
 export const getGraphItem = (
   items: GraphItem[],
   findId: string
-): GraphItem | undefined => {
-  let found = undefined;
-
-  for (let item of items) {
-    if (item.id === findId) {
-      found = item;
-      break;
-    }
-    if (item.topics) {
-      let question = getGraphItem(item.topics, findId);
-      if (question) {
-        found = question;
-        break;
-      }
-    }
-    if (item.questions) {
-      let question = getGraphItem(item.questions, findId);
-      if (question) {
-        found = question;
-        break;
-      }
-    }
-  }
-
-  return found;
-};
+): GraphItem | undefined =>
+  items.reduce(
+    (previousValue: GraphItem | undefined, currentValue: GraphItem) => {
+      if (previousValue) return previousValue;
+      if (currentValue.id === findId) return currentValue;
+      if (currentValue.topics) return getGraphItem(currentValue.topics, findId);
+      if (currentValue.questions) return getGraphItem(currentValue.questions, findId);
+    },
+    undefined
+  );
 
 export const { addNewGraph, setMouseOver } = graphsSlice.actions;
 
