@@ -22,24 +22,28 @@ import {
   toggleShowBranchQs,
 } from "../../slice/configurationSlice";
 import {
+  addNewGraphItem,
+  generateUUID,
   Graph,
   GraphItem,
   GraphItemType,
   setMouseOver,
 } from "../../slice/graphsSlice";
 import { Routes } from "../../router";
+import { useSnackbar } from "notistack";
 
 import styles from "./Questions.module.scss";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     cursor: "context-menu",
+    height: "100%",
   },
   graphHeading: {
     fontSize: "1.25rem",
     color: "#888",
     marginLeft: 25,
-    marginTop: 15,
+    paddingTop: 15,
   },
   graphIcon: {
     fontSize: "1.05rem",
@@ -64,7 +68,6 @@ const useStyles = makeStyles((theme) => ({
 const initialContextPos = {
   mouseX: null as number | null,
   mouseY: null as number | null,
-  item: null as GraphItem | null,
 };
 
 const defaultExpandedItems = (items: GraphItem[]) => {
@@ -95,6 +98,7 @@ const QuestionsView = ({ graph }: Props) => {
   const history = useHistory();
   const { t } = useTranslation();
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const { showBranchQs, showArchive } = useSelector(
     (state: RootState) => state.configuation
   );
@@ -102,6 +106,7 @@ const QuestionsView = ({ graph }: Props) => {
   const [contextPos, setContextPos] = useState(initialContextPos);
   const [showQuestionDialog, setQuestionDialog] = useState(false);
   const [showTopicDialog, setTopicDialog] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<GraphItem | null>();
   const [expanded, setExpanded] = useState(defaultExpandedItems(graph.data));
 
   const menuItems = [
@@ -123,7 +128,7 @@ const QuestionsView = ({ graph }: Props) => {
     },
   ];
 
-  if (!contextPos.item || contextPos.item.type === GraphItemType.Topic) {
+  if (!selectedItem || selectedItem.type === GraphItemType.Topic) {
     menuItems.unshift({
       id: "m1",
       name: "Create Topic",
@@ -135,7 +140,7 @@ const QuestionsView = ({ graph }: Props) => {
     });
   }
 
-  if (contextPos.item) {
+  if (selectedItem) {
     menuItems.unshift({
       id: "m2",
       name: "Create Question",
@@ -145,9 +150,6 @@ const QuestionsView = ({ graph }: Props) => {
         setQuestionDialog(true);
       },
     });
-  }
-
-  if (contextPos.item) {
     menuItems.push(
       {
         id: "m5",
@@ -155,6 +157,7 @@ const QuestionsView = ({ graph }: Props) => {
         divider: true,
         onClick: () => {
           setContextPos(initialContextPos);
+          setSelectedItem(null);
         },
       },
       {
@@ -163,6 +166,7 @@ const QuestionsView = ({ graph }: Props) => {
         divider: false,
         onClick: () => {
           setContextPos(initialContextPos);
+          setSelectedItem(null);
         },
       },
       {
@@ -171,6 +175,7 @@ const QuestionsView = ({ graph }: Props) => {
         divider: false,
         onClick: () => {
           setContextPos(initialContextPos);
+          setSelectedItem(null);
         },
       }
     );
@@ -202,8 +207,8 @@ const QuestionsView = ({ graph }: Props) => {
           setContextPos({
             mouseX: event.clientX - 2,
             mouseY: event.clientY - 4,
-            item,
           });
+          setSelectedItem(item);
         }}
         onMouseEnter={() =>
           dispatch(
@@ -243,8 +248,8 @@ const QuestionsView = ({ graph }: Props) => {
         setContextPos({
           mouseX: event.clientX - 2,
           mouseY: event.clientY - 4,
-          item: null,
         });
+        setSelectedItem(null);
       }}
     >
       <Typography className={classes.graphHeading}>
@@ -277,6 +282,7 @@ const QuestionsView = ({ graph }: Props) => {
         }
         onClose={() => {
           setContextPos(initialContextPos);
+          setSelectedItem(null);
         }}
         anchorReference="anchorPosition"
         anchorPosition={
@@ -301,8 +307,31 @@ const QuestionsView = ({ graph }: Props) => {
           labelText="Topic"
           onClose={() => setTopicDialog(false)}
           onOkay={(topic) => {
-            console.log(topic);
             setTopicDialog(false);
+
+            dispatch(
+              addNewGraphItem({
+                graphId: graph.id,
+                parentItemId: selectedItem ? selectedItem.id : undefined,
+                newItem: {
+                  id: generateUUID(),
+                  name: topic,
+                  type: GraphItemType.Topic,
+                  isMouseOver: false,
+                  created: new Date(),
+                },
+              })
+            );
+
+            setSelectedItem(null);
+
+            enqueueSnackbar("Topic successfully added", {
+              variant: "success",
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "center",
+              },
+            });
           }}
         />
       )}
@@ -312,8 +341,31 @@ const QuestionsView = ({ graph }: Props) => {
           labelText="Question"
           onClose={() => setQuestionDialog(false)}
           onOkay={(question) => {
-            console.log(question);
             setQuestionDialog(false);
+
+            dispatch(
+              addNewGraphItem({
+                graphId: graph.id,
+                parentItemId: selectedItem ? selectedItem.id : undefined,
+                newItem: {
+                  id: generateUUID(),
+                  name: question,
+                  type: GraphItemType.Question,
+                  isMouseOver: false,
+                  created: new Date(),
+                },
+              })
+            );
+            
+            setSelectedItem(null);
+
+            enqueueSnackbar("Question successfully added", {
+              variant: "success",
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "center",
+              },
+            });
           }}
         />
       )}

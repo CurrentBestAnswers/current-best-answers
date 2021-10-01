@@ -18,12 +18,14 @@ export type Graph = {
   name: string;
   isPrivate: boolean;
   data: GraphItem[];
+  created: string;
 };
 
 export type GraphItem = {
   id: string;
   name: string;
   type: GraphItemType;
+  created: string;
   questions?: GraphItem[];
   topics?: GraphItem[];
 
@@ -42,24 +44,28 @@ const initialQuestions: GraphItem[] = [
     name: "Financial",
     type: GraphItemType.Topic,
     isMouseOver: false,
+    created: new Date().toString(),
     questions: [
       {
         id: "2",
         name: "What should I do with my money? Invest it? If so, where? What are my options?",
         type: GraphItemType.Question,
         isMouseOver: false,
+        created: new Date().toString(),
       },
       {
         id: "3",
         name: "What is my cost of living?",
         type: GraphItemType.Question,
         isMouseOver: false,
+        created: new Date().toString(),
       },
       {
         id: "4",
         name: "Should I accept the job offer to work as a teacher?",
         type: GraphItemType.Question,
         isMouseOver: false,
+        created: new Date().toString(),
       },
     ],
   },
@@ -68,18 +74,21 @@ const initialQuestions: GraphItem[] = [
     name: "Health",
     type: GraphItemType.Topic,
     isMouseOver: false,
+    created: new Date().toString(),
     topics: [
       {
         id: "6",
         name: "Sleep",
         type: GraphItemType.Topic,
         isMouseOver: false,
+        created: new Date().toString(),
         questions: [
           {
             id: "7",
             name: "What kind of sleep schedule should I follow?",
             type: GraphItemType.Question,
             isMouseOver: false,
+            created: new Date().toString(),
           },
         ],
       },
@@ -88,24 +97,28 @@ const initialQuestions: GraphItem[] = [
         name: "Nutrition",
         type: GraphItemType.Topic,
         isMouseOver: false,
+        created: new Date().toString(),
         questions: [
           {
             id: "9",
             name: "What kind of diet should I eat?",
             type: GraphItemType.Question,
             isMouseOver: false,
+            created: new Date().toString(),
             questions: [
               {
                 id: "10",
                 name: "Should I eat things with refined oil in them?",
                 type: GraphItemType.Question,
                 isMouseOver: false,
+                created: new Date().toString(),
               },
               {
                 id: "11",
                 name: "Should I include soy in my diet? Is soy problematic to health? ",
                 type: GraphItemType.Question,
                 isMouseOver: false,
+                created: new Date().toString(),
               },
             ],
           },
@@ -114,12 +127,14 @@ const initialQuestions: GraphItem[] = [
             name: "Should I consume caffeine?",
             type: GraphItemType.Question,
             isMouseOver: false,
+            created: new Date().toString(),
           },
           {
             id: "13",
             name: "Should I take any supplements? If so, which ones?",
             type: GraphItemType.Question,
             isMouseOver: false,
+            created: new Date().toString(),
           },
         ],
       },
@@ -128,24 +143,28 @@ const initialQuestions: GraphItem[] = [
         name: "Vision",
         type: GraphItemType.Topic,
         isMouseOver: false,
+        created: new Date().toString(),
         questions: [
           {
             id: "15",
             name: "What kind of diet should I eat?",
             type: GraphItemType.Question,
             isMouseOver: false,
+            created: new Date().toString(),
             questions: [
               {
                 id: "16",
                 name: "Should I eat things with refined oil in them?",
                 type: GraphItemType.Question,
                 isMouseOver: false,
+                created: new Date().toString(),
               },
               {
                 id: "17",
                 name: "Should I include soy in my diet? Is soy problematic to health? ",
                 type: GraphItemType.Question,
                 isMouseOver: false,
+                created: new Date().toString(),
               },
             ],
           },
@@ -154,12 +173,14 @@ const initialQuestions: GraphItem[] = [
             name: "Should I consume caffeine?",
             type: GraphItemType.Question,
             isMouseOver: false,
+            created: new Date().toString(),
           },
           {
             id: "19",
             name: "Should I take any supplements? If so, which ones?",
             type: GraphItemType.Question,
             isMouseOver: false,
+            created: new Date().toString(),
           },
         ],
       },
@@ -170,30 +191,35 @@ const initialQuestions: GraphItem[] = [
     name: "Stuff I Buy, Own and Use",
     type: GraphItemType.Topic,
     isMouseOver: false,
+    created: new Date().toString(),
     questions: [
       {
         id: "21",
         name: "What should I ask myself before buying something? What principles / critiera should stuff I buy meet?",
         type: GraphItemType.Question,
         isMouseOver: false,
+        created: new Date().toString(),
       },
       {
         id: "22",
         name: "Should I own a car? If so, which one?",
         type: GraphItemType.Question,
         isMouseOver: false,
+        created: new Date().toString(),
         questions: [
           {
             id: "23",
             name: "Where should I get my car serviced? Should I service it myself?",
             type: GraphItemType.Question,
             isMouseOver: false,
+            created: new Date().toString(),
           },
           {
             id: "24",
             name: "Should I insure my car? If so, what type, and with what company?",
             type: GraphItemType.Question,
             isMouseOver: false,
+            created: new Date().toString(),
           },
         ],
       },
@@ -202,12 +228,14 @@ const initialQuestions: GraphItem[] = [
         name: "Should I own a laptop? If so, which one?",
         type: GraphItemType.Question,
         isMouseOver: false,
+        created: new Date().toString(),
       },
       {
         id: "26",
         name: "Should I buy, own and use a carbon fibre road bike? If so, which one?",
         type: GraphItemType.Question,
         isMouseOver: false,
+        created: new Date().toString(),
       },
     ],
   },
@@ -219,18 +247,21 @@ const initialState: GraphsState = {
       id: "personal",
       name: "Personal",
       isPrivate: true,
+      created: new Date().toString(),
       data: cloneDeep(initialQuestions),
     },
     {
       id: "work",
       name: "Work",
       isPrivate: true,
+      created: new Date().toString(),
       data: cloneDeep(initialQuestions),
     },
     {
       id: "public",
       name: "Public",
       isPrivate: false,
+      created: new Date().toString(),
       data: cloneDeep(initialQuestions),
     },
   ],
@@ -244,6 +275,38 @@ export const graphsSlice = createSlice({
   reducers: {
     addNewGraph: (state, action: PayloadAction<Graph>) => {
       state.graphs.push(action.payload);
+    },
+    addNewGraphItem: (
+      state,
+      action: PayloadAction<{
+        newItem: GraphItem;
+        graphId: string;
+        parentItemId: string | undefined;
+      }>
+    ) => {
+      const { newItem, graphId, parentItemId } = action.payload;
+
+      let graph = getGraph(state.graphs, graphId);
+      if (graph) {
+        if (parentItemId) {
+          let graphItem = getGraphItem(graph.data, parentItemId!);
+
+          if (graphItem && newItem.type === GraphItemType.Topic) {
+            graphItem.topics
+              ? graphItem.topics.push(newItem)
+              : (graphItem.topics = [newItem]);
+          } else if (
+            graphItem &&
+            newItem.type === GraphItemType.Question
+          ) {
+            graphItem.questions
+              ? graphItem.questions.push(newItem)
+              : (graphItem.questions = [newItem]);
+          }
+        } else {
+          graph.data.push(newItem);
+        }
+      }
     },
     setMouseOver: (
       state,
@@ -279,11 +342,19 @@ export const getGraphItem = (
       if (previousValue) return previousValue;
       if (currentValue.id === findId) return currentValue;
       if (currentValue.topics) return getGraphItem(currentValue.topics, findId);
-      if (currentValue.questions) return getGraphItem(currentValue.questions, findId);
+      if (currentValue.questions)
+        return getGraphItem(currentValue.questions, findId);
     },
     undefined
   );
 
-export const { addNewGraph, setMouseOver } = graphsSlice.actions;
+export const generateUUID = () => {
+  let uniqueId =
+    Math.random().toString(36).substring(2) + Date.now().toString(36);
+  return uniqueId;
+};
+
+export const { addNewGraph, addNewGraphItem, setMouseOver } =
+  graphsSlice.actions;
 
 export default graphsSlice.reducer;

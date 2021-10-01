@@ -55,6 +55,7 @@ const TextDialog = ({ buttonText, labelText, onOkay, onClose }: Props) => {
         <Typography className={classes.errorText}>{error}</Typography>
         <Button
           className={classes.button}
+          type="submit"
           variant="outlined"
           onClick={() => {
             if (response) {
