@@ -120,7 +120,7 @@ const AddGraph = ({}: Props) => {
               id: name.toLowerCase().replaceAll(" ", ""),
               name,
               isPrivate,
-              created: new Date(),
+              created: new Date().toString(),
               data: []
             })
           );

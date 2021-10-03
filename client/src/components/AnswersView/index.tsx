@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   makeStyles,
   Typography,
@@ -8,13 +8,17 @@ import {
 } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import MUIRichTextEditor from "mui-rte";
+import { useDispatch, useSelector } from "react-redux";
+import MUIRichTextEditor, { TMUIRichTextEditorRef } from "mui-rte";
 import queryString from "query-string";
 import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer";
 import ErrorView from "../ErrorView";
 import { RootState } from "../../store";
-import { getGraphItem, Graph } from "../../slice/graphsSlice";
+import {
+  getGraphItem,
+  Graph,
+  updateGraphItemAnswer,
+} from "../../slice/graphsSlice";
 
 import styles from "./AnswersView.module.scss";
 
@@ -77,6 +81,8 @@ const AnswersView = ({ graph }: Props) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
+  const rtfRef = useRef<TMUIRichTextEditorRef>(null);
   const [showAnswerToolBar, setAnswerToolBar] = useState(false);
   const parsedQs = queryString.parse(history.location.search);
   let questionId =
@@ -111,6 +117,7 @@ const AnswersView = ({ graph }: Props) => {
       <Box className={classes.answerTextBox}>
         <MuiThemeProvider theme={defaultTheme}>
           <MUIRichTextEditor
+            ref={rtfRef}
             label="Start typing..."
             toolbar={showAnswerToolBar}
             controls={[
@@ -124,9 +131,23 @@ const AnswersView = ({ graph }: Props) => {
               "link",
               "numberList",
               "bulletList",
+              "save",
             ]}
+            defaultValue={question.answer}
             onFocus={() => setAnswerToolBar(true)}
-            onBlur={() => setAnswerToolBar(false)}
+            onBlur={() => {
+              setAnswerToolBar(false);
+              rtfRef.current?.save();
+            }}
+            onSave={(answer) => {
+              dispatch(
+                updateGraphItemAnswer({
+                  answer,
+                  graphId: graph.id,
+                  graphItemId: questionId,
+                })
+              );
+            }}
           />
         </MuiThemeProvider>
       </Box>

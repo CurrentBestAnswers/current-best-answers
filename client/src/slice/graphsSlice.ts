@@ -28,6 +28,7 @@ export type GraphItem = {
   created: string;
   questions?: GraphItem[];
   topics?: GraphItem[];
+  answer?: string;
 
   // For frontend use only
   isMouseOver: boolean;
@@ -295,16 +296,31 @@ export const graphsSlice = createSlice({
             graphItem.topics
               ? graphItem.topics.push(newItem)
               : (graphItem.topics = [newItem]);
-          } else if (
-            graphItem &&
-            newItem.type === GraphItemType.Question
-          ) {
+          } else if (graphItem && newItem.type === GraphItemType.Question) {
             graphItem.questions
               ? graphItem.questions.push(newItem)
               : (graphItem.questions = [newItem]);
           }
         } else {
           graph.data.push(newItem);
+        }
+      }
+    },
+    updateGraphItemAnswer: (
+      state,
+      action: PayloadAction<{
+        answer: string;
+        graphId: string;
+        graphItemId: string;
+      }>
+    ) => {
+      const { answer, graphId, graphItemId } = action.payload;
+
+      let graph = getGraph(state.graphs, graphId);
+      if (graph) {
+        let graphItem = getGraphItem(graph.data, graphItemId);
+        if (graphItem) {
+          graphItem.answer = answer;
         }
       }
     },
@@ -354,7 +370,7 @@ export const generateUUID = () => {
   return uniqueId;
 };
 
-export const { addNewGraph, addNewGraphItem, setMouseOver } =
+export const { addNewGraph, addNewGraphItem, updateGraphItemAnswer, setMouseOver } =
   graphsSlice.actions;
 
 export default graphsSlice.reducer;

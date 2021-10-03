@@ -318,7 +318,7 @@ const QuestionsView = ({ graph }: Props) => {
                   name: topic,
                   type: GraphItemType.Topic,
                   isMouseOver: false,
-                  created: new Date(),
+                  created: new Date().toString(),
                 },
               })
             );
@@ -352,7 +352,7 @@ const QuestionsView = ({ graph }: Props) => {
                   name: question,
                   type: GraphItemType.Question,
                   isMouseOver: false,
-                  created: new Date(),
+                  created: new Date().toString(),
                 },
               })
             );
