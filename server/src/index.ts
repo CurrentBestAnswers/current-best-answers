@@ -4,6 +4,7 @@ import * as path from "path";
 import { buildSchema } from "type-graphql";
 import { GraphResolver } from "./resolvers/graphResolver";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
+import { sequelize } from "./sequelize";
 
 async function bootstrap() {
   // build TypeGraphQL executable schema
@@ -19,6 +20,8 @@ async function bootstrap() {
     // enable GraphQL Playground
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
   });
+
+  await sequelize.sync({force: true});
 
   // Start the server
   const { url } = await server.listen(4000);

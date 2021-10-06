@@ -1,3 +1,4 @@
+import { BelongsTo, Column, HasMany, Model, Table } from "sequelize-typescript";
 import {
   Field,
   ObjectType,
@@ -7,27 +8,36 @@ import {
 } from "type-graphql";
 
 @ObjectType()
-export class Graph {
+@Table
+export class Graph extends Model {
   @Field((type) => ID)
+  @Column
   readonly id: string;
 
   @Field()
+  @Column
   name: string;
 
   @Field()
+  @Column
   isPrivate: boolean;
 
   @Field((type) => [GraphItem], { nullable: true })
+  @HasMany(() => GraphItem)
   data: GraphItem[];
 
   @Field()
+  @Column
   created: Date;
 }
 
 @ObjectType()
-export class GraphItem {
+export class GraphItem extends Model {
   @Field((type) => ID)
   readonly id: string;
+  
+  @BelongsTo(() => Graph)
+  graph: Graph
 
   @Field()
   name: string;
@@ -83,3 +93,7 @@ export class GraphItemInput implements Partial<GraphItem> {
   @Field({ nullable: true })
   answer?: string;
 }
+function OneToMany(arg0: () => typeof GraphItem) {
+  throw new Error("Function not implemented.");
+}
+
