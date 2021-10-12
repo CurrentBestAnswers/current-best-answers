@@ -1,0 +1,13 @@
+
+version: '2.3'
+services:
+  db:
+    image: mongo:latest
+    container_name: cba_db
+    command: mongod --port 27018
+    environment:
+      MONGO_INITDB_DATABASE: cba
+      MONGO_INITDB_ROOT_USERNAME: server
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - '27018:27018'

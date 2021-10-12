@@ -1,5 +1,9 @@
 # current-best-answers
 
-## Reference
+## Commands
 
-https://github.com/atulmy/fullstack-graphql/blob/master/web/src/components/thoughts/api/actions.js
+```bash
+cd scripts && sudo bash start-db.sh
+```
+
+## Reference

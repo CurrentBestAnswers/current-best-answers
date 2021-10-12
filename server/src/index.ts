@@ -1,31 +1,13 @@
-import "reflect-metadata";
-import { ApolloServer } from "apollo-server";
-import * as path from "path";
-import { buildSchema } from "type-graphql";
-import { GraphResolver } from "./resolvers/graphResolver";
-import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
-import { sequelize } from "./sequelize";
+import logger from './logger';
+import app from './app';
 
-async function bootstrap() {
-  // build TypeGraphQL executable schema
-  const schema = await buildSchema({
-    resolvers: [GraphResolver],
-    // automatically create `schema.gql` file with schema definition in current folder
-    emitSchemaFile: path.resolve(__dirname, "schema.gql"),
-  });
+const port = app.get('port');
+const server = app.listen(port);
 
-  // Create GraphQL server
-  const server = new ApolloServer({
-    schema,
-    // enable GraphQL Playground
-    plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
-  });
+process.on('unhandledRejection', (reason, p) =>
+  logger.error('Unhandled Rejection at: Promise ', p, reason)
+);
 
-  await sequelize.sync({force: true});
-
-  // Start the server
-  const { url } = await server.listen(4000);
-  console.log(`Server is running, GraphQL Playground available at ${url}`);
-}
-
-bootstrap();
+server.on('listening', () =>
+  logger.info('Feathers application started on http://%s:%d', app.get('host'), port)
+);
