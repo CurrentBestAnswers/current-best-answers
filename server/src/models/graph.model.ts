@@ -10,9 +10,10 @@ export default function (app: Application): Model<any> {
   const mongooseClient: Mongoose = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
-    text: { type: String, required: true }
-  }, {
-    timestamps: true
+    name: { type: String, required: true },
+    isPrivate: { type: String, required: true },
+    data: [{ type: Schema.Types.ObjectId, ref: 'graphItem' }],
+    created: { type: Date, default: Date.now },
   });
 
   // This is necessary to avoid model compilation errors in watch mode

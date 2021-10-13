@@ -8,7 +8,6 @@ import feathers from '@feathersjs/feathers';
 import configuration from '@feathersjs/configuration';
 import express from '@feathersjs/express';
 import socketio from '@feathersjs/socketio';
-import swagger from 'feathers-swagger';
 
 
 import { Application } from './declarations';
@@ -43,19 +42,6 @@ app.configure(express.rest());
 app.configure(socketio());
 
 app.configure(mongoose);
-
-// Setup swagger
-app.configure(swagger({
-  uiIndex: true,
-  specs: {
-    info: {
-      title: 'Current Best Answers Service',
-      description: 'A service to provider REST endpoints for Current Best Answers',
-      version: '1.0.0',
-    },
-    schemes: ['http', 'https'] // Optionally set the protocol schema used (sometimes required when host on https)
-  }
-}));
 
 // Configure other middleware (see `middleware/index.ts`)
 app.configure(middleware);
