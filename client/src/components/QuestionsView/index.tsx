@@ -21,12 +21,14 @@ import {
   toggleShowArchive,
   toggleShowBranchQs,
 } from "../../slice/configurationSlice";
-import {
-  addNewGraphItem,
-  generateUUID,
-  setMouseOver,
-} from "../../slice/graphsSlice";
+import { addNewGraphItem, setMouseOver } from "../../slice/graphsSlice";
 import { Graph, GraphItem, GraphItemType } from "../../models/graph";
+import {
+  patchGraphItemQuestions,
+  patchGraphItemTopics,
+  postGraphItem,
+} from "../../api/graphItemApi";
+import { patchGraph } from "../../api/graphApi";
 import { Routes } from "../../router";
 import { useSnackbar } from "notistack";
 
@@ -210,12 +212,20 @@ const QuestionsView = ({ graph }: Props) => {
         }}
         onMouseEnter={() =>
           dispatch(
-            setMouseOver({ id: item._id, graphId: graph._id, isMouseOver: true })
+            setMouseOver({
+              id: item._id,
+              graphId: graph._id,
+              isMouseOver: true,
+            })
           )
         }
         onMouseLeave={() =>
           dispatch(
-            setMouseOver({ id: item._id, graphId: graph._id, isMouseOver: false })
+            setMouseOver({
+              id: item._id,
+              graphId: graph._id,
+              isMouseOver: false,
+            })
           )
         }
         onClick={
@@ -304,32 +314,44 @@ const QuestionsView = ({ graph }: Props) => {
           buttonText="Create Topic"
           labelText="Topic"
           onClose={() => setTopicDialog(false)}
-          onOkay={(topic) => {
-            setTopicDialog(false);
+          onOkay={async (topic) => {
+            try {
+              setTopicDialog(false);
 
-            // dispatch(
-            //   addNewGraphItem({
-            //     graphId: graph._id,
-            //     parentItemId: selectedItem ? selectedItem._id : undefined,
-            //     newItem: {
-            //       _id: generateUUID(),
-            //       name: topic,
-            //       type: GraphItemType.Topic,
-            //       isMouseOver: false,
-            //       created: new Date().toString(),
-            //     },
-            //   })
-            // );
+              const graphItem = await postGraphItem(topic, GraphItemType.Topic);
 
-            setSelectedItem(null);
+              if (selectedItem) {
+                await patchGraphItemTopics(selectedItem, graphItem._id);
+              } else {
+                await patchGraph(graph, graphItem._id);
+              }
 
-            enqueueSnackbar("Topic successfully added", {
-              variant: "success",
-              anchorOrigin: {
-                vertical: "bottom",
-                horizontal: "center",
-              },
-            });
+              dispatch(
+                addNewGraphItem({
+                  graphId: graph._id,
+                  parentItemId: selectedItem ? selectedItem._id : undefined,
+                  newItem: graphItem,
+                })
+              );
+
+              setSelectedItem(null);
+
+              enqueueSnackbar("Topic successfully added", {
+                variant: "success",
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "center",
+                },
+              });
+            } catch (err) {
+              enqueueSnackbar(`Failed to add ${topic} topic`, {
+                variant: "error",
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "center",
+                },
+              });
+            }
           }}
         />
       )}
@@ -338,32 +360,45 @@ const QuestionsView = ({ graph }: Props) => {
           buttonText="Create Question"
           labelText="Question"
           onClose={() => setQuestionDialog(false)}
-          onOkay={(question) => {
-            setQuestionDialog(false);
+          onOkay={async (question) => {
+            try {
+              setQuestionDialog(false);
 
-            // dispatch(
-            //   addNewGraphItem({
-            //     graphId: graph._id,
-            //     parentItemId: selectedItem ? selectedItem._id : undefined,
-            //     newItem: {
-            //       _id: generateUUID(),
-            //       name: question,
-            //       type: GraphItemType.Question,
-            //       isMouseOver: false,
-            //       created: new Date().toString(),
-            //     },
-            //   })
-            // );
+              const graphItem = await postGraphItem(
+                question,
+                GraphItemType.Question
+              );
 
-            setSelectedItem(null);
+              if (selectedItem) {
+                await patchGraphItemQuestions(selectedItem, graphItem._id);
+              }
 
-            enqueueSnackbar("Question successfully added", {
-              variant: "success",
-              anchorOrigin: {
-                vertical: "bottom",
-                horizontal: "center",
-              },
-            });
+              dispatch(
+                addNewGraphItem({
+                  graphId: graph._id,
+                  parentItemId: selectedItem ? selectedItem._id : undefined,
+                  newItem: graphItem,
+                })
+              );
+
+              setSelectedItem(null);
+
+              enqueueSnackbar("Question successfully added", {
+                variant: "success",
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "center",
+                },
+              });
+            } catch (err) {
+              enqueueSnackbar(`Failed to add ${question} question`, {
+                variant: "error",
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "center",
+                },
+              });
+            }
           }}
         />
       )}

@@ -22,11 +22,32 @@ export async function postGraphItem(name: string, type: GraphItemType) {
   }
 }
 
-export async function patchGraphItem(graphId: string, graphItemId: string) {
-  const endpoint = `${Routes.Root_Endpoint}${Routes.GraphItem_Service}/${graphId}`;
+export async function patchGraphItemTopics(parentGraphItem: GraphItem, graphItemId: string) {
   const body = {
-    data: [graphItemId],
+    topics: [graphItemId],
   };
+
+  return patchGraphItem(parentGraphItem, body);
+}
+
+export async function patchGraphItemQuestions(parentGraphItem: GraphItem, graphItemId: string) {
+  const body = {
+    questions: [graphItemId],
+  };
+  
+  return patchGraphItem(parentGraphItem, body);
+}
+
+export async function patchGraphItemAnswer(graphItem: GraphItem, answer: string) {
+  const body = {
+    answer: answer
+  };
+  
+  return patchGraphItem(graphItem, body);
+}
+
+async function patchGraphItem(graphItem: GraphItem, body: any) {
+  const endpoint = `${Routes.Root_Endpoint}${Routes.GraphItem_Service}/${graphItem._id}`;
 
   try {
     let response = await axios.patch<GraphItem>(endpoint, body);

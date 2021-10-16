@@ -47,6 +47,7 @@ export const graphsSlice = createSlice({
       }>
     ) => {
       const { newItem, graphId, parentItemId } = action.payload;
+      newItem.isMouseOver = false;
 
       let graph = getGraph(state.graphs, graphId);
       if (graph) {
@@ -110,20 +111,50 @@ export const getGraph = (graphs: Graph[], id: string) =>
 /**
  * https://stackoverflow.com/a/53390570
  */
+// export const getGraphItem = (
+//   items: GraphItem[],
+//   findId: string
+// ): GraphItem | undefined =>
+//   items.reduce(
+//     (previousValue: GraphItem | undefined, currentValue: GraphItem) => {
+//       if (previousValue) return previousValue;
+//       if (currentValue._id === findId) return currentValue;
+//       if (currentValue.topics) return getGraphItem(currentValue.topics, findId);
+//       if (currentValue.questions)
+//         return getGraphItem(currentValue.questions, findId);
+//     },
+//     undefined
+//   );
+
 export const getGraphItem = (
   items: GraphItem[],
   findId: string
-): GraphItem | undefined =>
-  items.reduce(
-    (previousValue: GraphItem | undefined, currentValue: GraphItem) => {
-      if (previousValue) return previousValue;
-      if (currentValue._id === findId) return currentValue;
-      if (currentValue.topics) return getGraphItem(currentValue.topics, findId);
-      if (currentValue.questions)
-        return getGraphItem(currentValue.questions, findId);
-    },
-    undefined
-  );
+): GraphItem | undefined => {
+  let found = undefined;
+
+  for (let item of items) {
+    if (item._id === findId) {
+      found = item;
+      break;
+    }
+    if (item.topics) {
+      let topic = getGraphItem(item.topics, findId);
+      if (topic) {
+        found = topic;
+        break;
+      }
+    }
+    if (item.questions) {
+      let question = getGraphItem(item.questions, findId);
+      if (question) {
+        found = question;
+        break;
+      }
+    }
+  }
+
+  return found;
+};
 
 export const generateUUID = () => {
   let uniqueId =

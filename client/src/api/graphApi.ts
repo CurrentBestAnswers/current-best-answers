@@ -35,10 +35,10 @@ export async function getGraphs() {
   }
 }
 
-export async function patchGraph(graphId: string, graphItemId: string) {
-  const endpoint = `${Routes.Root_Endpoint}${Routes.Graph_Service}/${graphId}`;
+export async function patchGraph(graph: Graph, graphItemId: string) {
+  const endpoint = `${Routes.Root_Endpoint}${Routes.Graph_Service}/${graph._id}`;
   const body = {
-    data: [graphItemId],
+    data: [...graph.data, graphItemId],
   };
 
   try {

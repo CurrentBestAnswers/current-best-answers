@@ -5,6 +5,7 @@ import {
   createTheme,
   MuiThemeProvider,
   Box,
+  LinearProgress,
 } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -14,13 +15,12 @@ import queryString from "query-string";
 import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer";
 import ErrorView from "../ErrorView";
 import { RootState } from "../../store";
-import {
-  getGraphItem,
-  Graph,
-  updateGraphItemAnswer,
-} from "../../slice/graphsSlice";
+import { getGraphItem, updateGraphItemAnswer } from "../../slice/graphsSlice";
+import { Graph, GraphItem } from "../../models/graph";
 
 import styles from "./AnswersView.module.scss";
+import { patchGraphItemAnswer } from "../../api/graphItemApi";
+import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,19 +83,17 @@ const AnswersView = ({ graph }: Props) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const rtfRef = useRef<TMUIRichTextEditorRef>(null);
+  const { enqueueSnackbar } = useSnackbar();
   const [showAnswerToolBar, setAnswerToolBar] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const parsedQs = queryString.parse(history.location.search);
   let questionId =
     parsedQs && parsedQs.question ? parsedQs.question.toString() : "";
 
-  const question = useSelector((state: RootState) => {
-    if (questionId) {
-      let selectedQuestion = getGraphItem(graph.data, questionId);
-      return selectedQuestion;
-    }
-
-    return undefined;
-  });
+  let question: GraphItem | undefined;
+  if (questionId) {
+    question = getGraphItem(graph.data, questionId);
+  }
 
   if (!question) {
     return (
@@ -139,17 +137,35 @@ const AnswersView = ({ graph }: Props) => {
               setAnswerToolBar(false);
               rtfRef.current?.save();
             }}
-            onSave={(answer) => {
-              dispatch(
-                updateGraphItemAnswer({
-                  answer,
-                  graphId: graph.id,
-                  graphItemId: questionId,
-                })
-              );
+            onSave={async (answer) => {
+              try {
+                setIsLoading(true);
+  
+                await patchGraphItemAnswer(question!, answer);
+  
+                dispatch(
+                  updateGraphItemAnswer({
+                    answer,
+                    graphId: graph._id,
+                    graphItemId: questionId,
+                  })
+                );
+  
+                setIsLoading(false);
+              } catch (err) {
+                enqueueSnackbar(`Failed to save answer`, {
+                  variant: "error",
+                  anchorOrigin: {
+                    vertical: "bottom",
+                    horizontal: "center",
+                  },
+                });
+              }
             }}
           />
         </MuiThemeProvider>
+
+        {isLoading && <LinearProgress />}
       </Box>
     </div>
   );
