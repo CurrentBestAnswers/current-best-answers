@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -10,7 +10,7 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import LockIcon from "@material-ui/icons/Lock";
 import GroupIcon from "@material-ui/icons/Group";
 import AddIcon from "@material-ui/icons/Add";
@@ -18,6 +18,15 @@ import { RootState } from "../../store";
 import { Routes } from "../../router";
 
 import styles from "./Graph.module.scss";
+import {
+  fetchedGraphs,
+  fetchGraphs,
+  GraphStatus,
+  setGraphError,
+} from "../../slice/graphsSlice";
+import { getGraphs } from "../../api/graphApi";
+import LoadingView from "../LoadingView";
+import ErrorView from "../ErrorView";
 
 const useStyles = makeStyles((theme) => ({
   listItem: {
@@ -39,8 +48,33 @@ const Graph = ({}: Props) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
 
-  const { graphs } = useSelector((state: RootState) => state.graph);
+  const { graphs, error, status } = useSelector(
+    (state: RootState) => state.graph
+  );
+
+  const init = async () => {
+    try {
+      dispatch(fetchGraphs());
+
+      let graphs = await getGraphs();
+
+      dispatch(fetchedGraphs(graphs.data));
+    } catch (err) {
+      dispatch(setGraphError("Failed to get graphs."));
+    }
+  };
+
+  useEffect(() => {
+    init();
+  }, []);
+
+  if (status === GraphStatus.FetchingGraphs) {
+    return <LoadingView message="Loading graphs" />;
+  } else if (status === GraphStatus.Error) {
+    return <ErrorView error={error} onRetry={() => init()} />;
+  }
 
   return (
     <>
@@ -50,11 +84,11 @@ const Graph = ({}: Props) => {
         {graphs.map((item, index) => {
           return (
             <ListItem
-              key={item.id}
+              key={item._id}
               className={classes.listItem}
               button
               onClick={() =>
-                history.push(`${Routes.Questions}?graph=${item.id}`)
+                history.push(`${Routes.Questions}?graph=${item._id}`)
               }
             >
               <ListItemText primary={item.name} />

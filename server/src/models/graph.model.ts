@@ -11,7 +11,7 @@ export default function (app: Application): Model<any> {
   const { Schema } = mongooseClient;
   const schema = new Schema({
     name: { type: String, required: true },
-    isPrivate: { type: String, required: true },
+    isPrivate: { type: Boolean, required: true },
     data: [{ type: Schema.Types.ObjectId, ref: 'graphItem' }],
     created: { type: Date, default: Date.now },
   });

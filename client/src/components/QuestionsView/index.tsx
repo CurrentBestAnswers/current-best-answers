@@ -24,11 +24,9 @@ import {
 import {
   addNewGraphItem,
   generateUUID,
-  Graph,
-  GraphItem,
-  GraphItemType,
   setMouseOver,
 } from "../../slice/graphsSlice";
+import { Graph, GraphItem, GraphItemType } from "../../models/graph";
 import { Routes } from "../../router";
 import { useSnackbar } from "notistack";
 
@@ -75,7 +73,7 @@ const defaultExpandedItems = (items: GraphItem[]) => {
 
   items.map((item) => {
     if (item.questions || item.topics) {
-      expanded.push(item.id);
+      expanded.push(item._id);
     }
     if (item.topics) {
       let subExpanded = defaultExpandedItems(item.topics);
@@ -183,7 +181,7 @@ const QuestionsView = ({ graph }: Props) => {
 
   const GraphTreeItem = (item: GraphItem) => {
     let icon = <></>;
-    let isExpanded = expanded.find((value) => value === item.id);
+    let isExpanded = expanded.find((value) => value === item._id);
     if (item.topics || item.questions) {
       if (isExpanded) {
         icon = <ExpandMoreIcon />;
@@ -195,7 +193,7 @@ const QuestionsView = ({ graph }: Props) => {
     return (
       <TreeItem
         icon={icon}
-        nodeId={item.id}
+        nodeId={item._id}
         classes={{
           root: classes.treeItemRoot,
           label: item.type === GraphItemType.Topic ? classes.topicLabel : "",
@@ -212,12 +210,12 @@ const QuestionsView = ({ graph }: Props) => {
         }}
         onMouseEnter={() =>
           dispatch(
-            setMouseOver({ id: item.id, graphId: graph.id, isMouseOver: true })
+            setMouseOver({ id: item._id, graphId: graph._id, isMouseOver: true })
           )
         }
         onMouseLeave={() =>
           dispatch(
-            setMouseOver({ id: item.id, graphId: graph.id, isMouseOver: false })
+            setMouseOver({ id: item._id, graphId: graph._id, isMouseOver: false })
           )
         }
         onClick={
@@ -225,17 +223,17 @@ const QuestionsView = ({ graph }: Props) => {
             ? undefined
             : () =>
                 history.push(
-                  `${Routes.Questions}?graph=${graph.id}&question=${item.id}`
+                  `${Routes.Questions}?graph=${graph._id}&question=${item._id}`
                 )
         }
       >
         {item.questions &&
           item.questions.map((item) => (
-            <GraphTreeItem key={item.id} {...item} />
+            <GraphTreeItem key={item._id} {...item} />
           ))}
 
         {item.topics &&
-          item.topics.map((item) => <GraphTreeItem key={item.id} {...item} />)}
+          item.topics.map((item) => <GraphTreeItem key={item._id} {...item} />)}
       </TreeItem>
     );
   };
@@ -272,7 +270,7 @@ const QuestionsView = ({ graph }: Props) => {
       >
         {graph.data &&
           graph.data.map((item) => (
-            <GraphTreeItem key={`graph_${item.id}`} {...item} />
+            <GraphTreeItem key={`graph_${item._id}`} {...item} />
           ))}
       </TreeView>
       <Menu
@@ -309,19 +307,19 @@ const QuestionsView = ({ graph }: Props) => {
           onOkay={(topic) => {
             setTopicDialog(false);
 
-            dispatch(
-              addNewGraphItem({
-                graphId: graph.id,
-                parentItemId: selectedItem ? selectedItem.id : undefined,
-                newItem: {
-                  id: generateUUID(),
-                  name: topic,
-                  type: GraphItemType.Topic,
-                  isMouseOver: false,
-                  created: new Date().toString(),
-                },
-              })
-            );
+            // dispatch(
+            //   addNewGraphItem({
+            //     graphId: graph._id,
+            //     parentItemId: selectedItem ? selectedItem._id : undefined,
+            //     newItem: {
+            //       _id: generateUUID(),
+            //       name: topic,
+            //       type: GraphItemType.Topic,
+            //       isMouseOver: false,
+            //       created: new Date().toString(),
+            //     },
+            //   })
+            // );
 
             setSelectedItem(null);
 
@@ -343,20 +341,20 @@ const QuestionsView = ({ graph }: Props) => {
           onOkay={(question) => {
             setQuestionDialog(false);
 
-            dispatch(
-              addNewGraphItem({
-                graphId: graph.id,
-                parentItemId: selectedItem ? selectedItem.id : undefined,
-                newItem: {
-                  id: generateUUID(),
-                  name: question,
-                  type: GraphItemType.Question,
-                  isMouseOver: false,
-                  created: new Date().toString(),
-                },
-              })
-            );
-            
+            // dispatch(
+            //   addNewGraphItem({
+            //     graphId: graph._id,
+            //     parentItemId: selectedItem ? selectedItem._id : undefined,
+            //     newItem: {
+            //       _id: generateUUID(),
+            //       name: question,
+            //       type: GraphItemType.Question,
+            //       isMouseOver: false,
+            //       created: new Date().toString(),
+            //     },
+            //   })
+            // );
+
             setSelectedItem(null);
 
             enqueueSnackbar("Question successfully added", {

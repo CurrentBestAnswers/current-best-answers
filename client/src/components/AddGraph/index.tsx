@@ -4,6 +4,7 @@ import {
   Button,
   FormControl,
   FormControlLabel,
+  LinearProgress,
   makeStyles,
   Radio,
   RadioGroup,
@@ -17,6 +18,7 @@ import { addNewGraph } from "../../slice/graphsSlice";
 import { useSnackbar } from "notistack";
 
 import styles from "./AddGraph.module.scss";
+import { postGraph } from "../../api/graphApi";
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -52,6 +54,7 @@ const AddGraph = ({}: Props) => {
   const { enqueueSnackbar } = useSnackbar();
   const [name, setName] = useState(defaultName);
   const [isPrivate, setIsPrivate] = useState(defaultIsPrivate);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <>
@@ -103,42 +106,50 @@ const AddGraph = ({}: Props) => {
         className={classes.button}
         size="large"
         variant="outlined"
-        onClick={() => {
-          if (!name) {
-            enqueueSnackbar(`Please provide name for graph`, {
+        onClick={async () => {
+          try {
+            if (!name) {
+              enqueueSnackbar(`Please provide name for graph`, {
+                variant: "error",
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "center",
+                },
+              });
+              return;
+            }
+
+            setIsLoading(true);
+
+            let graph = await postGraph(name, isPrivate);
+            dispatch(addNewGraph(graph));
+
+            setName(defaultName);
+            setIsPrivate(defaultIsPrivate);
+            setIsLoading(false);
+
+            enqueueSnackbar(`Successfully added ${name} graph`, {
+              variant: "success",
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "center",
+              },
+            });
+          } catch (err) {
+            enqueueSnackbar(`Failed to add ${name} graph`, {
               variant: "error",
               anchorOrigin: {
                 vertical: "bottom",
                 horizontal: "center",
               },
             });
-            return;
           }
-
-          dispatch(
-            addNewGraph({
-              id: name.toLowerCase().replaceAll(" ", ""),
-              name,
-              isPrivate,
-              created: new Date().toString(),
-              data: []
-            })
-          );
-
-          setName(defaultName);
-          setIsPrivate(defaultIsPrivate);
-
-          enqueueSnackbar(`Successfully added ${name} graph`, {
-            variant: "success",
-            anchorOrigin: {
-              vertical: "bottom",
-              horizontal: "center",
-            },
-          });
         }}
       >
         Create Graph
       </Button>
+
+      {isLoading && <LinearProgress />}
     </>
   );
 };
