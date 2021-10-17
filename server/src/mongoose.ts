@@ -9,6 +9,10 @@ export default function (app: Application): void {
     fs.writeFileSync(certFile, process.env.CA_CERT);
   }
 
+  logger.info(process.env.CA_CERT);
+  logger.info(app.get("mongodb"));
+  logger.info(certFile);
+
   mongoose
     .connect(app.get("mongodb"), {
       useCreateIndex: true,
