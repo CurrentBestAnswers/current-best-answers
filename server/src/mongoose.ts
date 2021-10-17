@@ -17,7 +17,6 @@ export default function (app: Application): void {
     .connect(app.get("mongodb"), {
       useCreateIndex: true,
       useNewUrlParser: true,
-      tlsCAFile: process.env.CA_CERT ? certFile : undefined,
     })
     .catch((err) => {
       logger.error(err);
