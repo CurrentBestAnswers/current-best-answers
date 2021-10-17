@@ -6,11 +6,12 @@ const Routes = {
   GraphItem_Service: "/graph-item",
 };
 
-export async function postGraphItem(name: string, type: GraphItemType) {
+export async function postGraphItem(graphId: string, name: string, type: GraphItemType) {
   const endpoint = `${Routes.Root_Endpoint}${Routes.GraphItem_Service}`;
   const body = {
     name,
     type,
+    graph: graphId,
   };
 
   try {

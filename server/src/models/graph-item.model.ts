@@ -12,6 +12,7 @@ export default function (app: Application): Model<any> {
   const schema = new Schema({
     name: { type: String, required: true },
     type: { type: Number, required: true }, // Topic = 0, Question = 1,
+    graph: { type: Schema.Types.ObjectId, ref: 'graph', required: true },
     created: { type: Date, default: Date.now },
     questions: [{ type: Schema.Types.ObjectId, ref: 'graphItem' }],
     topics: [{ type: Schema.Types.ObjectId, ref: 'graphItem' }],

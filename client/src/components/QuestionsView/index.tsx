@@ -318,7 +318,11 @@ const QuestionsView = ({ graph }: Props) => {
             try {
               setTopicDialog(false);
 
-              const graphItem = await postGraphItem(topic, GraphItemType.Topic);
+              const graphItem = await postGraphItem(
+                graph._id,
+                topic,
+                GraphItemType.Topic
+              );
 
               if (selectedItem) {
                 await patchGraphItemTopics(selectedItem, graphItem._id);
@@ -365,6 +369,7 @@ const QuestionsView = ({ graph }: Props) => {
               setQuestionDialog(false);
 
               const graphItem = await postGraphItem(
+                graph._id,
                 question,
                 GraphItemType.Question
               );
