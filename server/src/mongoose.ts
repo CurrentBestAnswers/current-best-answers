@@ -9,6 +9,7 @@ export default function (app: Application): void {
     fs.writeFileSync(certFile, process.env.CA_CERT);
   }
 
+  console.log(app.get("mongodb"));
   console.log(process.env.CA_CERT);
   console.log(certFile);
   const str = fs.readFileSync(certFile, 'utf8');
