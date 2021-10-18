@@ -12,6 +12,8 @@ export default function (app: Application): void {
   // }
 
   console.log(app.get("mongodb"));
+  console.log(process.env.DATABASE_URL);
+  console.log(process.env.CA_CERT);
   // console.log(process.env.CA_CERT);
   console.log(certFile);
   const str = fs.readFileSync(certFile, 'utf8');
@@ -21,8 +23,8 @@ export default function (app: Application): void {
     .connect(app.get("mongodb"), {
       useCreateIndex: true,
       useNewUrlParser: true,
-      tls: true,
-      tlsCAFile: certFile,
+      // tls: true,
+      // tlsCAFile: certFile,
     })
     .catch((err) => {
       logger.error(err);

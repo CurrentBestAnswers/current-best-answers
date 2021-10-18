@@ -1,5 +1,5 @@
 {
   "host": "HOST",
   "port": "PORT",
-  "mongodb": "MONGO_DB"
+  "mongodb": "DATABASE_URL"
 }
