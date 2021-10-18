@@ -4,9 +4,9 @@ import { Application } from "./declarations";
 import logger from "./logger";
 
 export default function (app: Application): void {
-  const certFile = "./ca-certificate.crt";
+  // const certFile = "./ca-certificate.crt";
 
-  console.log(fs.existsSync(certFile));
+  // console.log(fs.existsSync(certFile));
   // if (process.env.CA_CERT && fs.existsSync(certFile) === false) {
   //   fs.writeFileSync(certFile, process.env.CA_CERT);
   // }
@@ -15,9 +15,9 @@ export default function (app: Application): void {
   console.log(process.env.DATABASE_URL);
   console.log(process.env.CA_CERT);
   // console.log(process.env.CA_CERT);
-  console.log(certFile);
-  const str = fs.readFileSync(certFile, 'utf8');
-  console.log(str);
+  // console.log(certFile);
+  // const str = fs.readFileSync(certFile, 'utf8');
+  // console.log(str);
 
   mongoose
     .connect(app.get("mongodb"), {
