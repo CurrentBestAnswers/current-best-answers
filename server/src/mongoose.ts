@@ -9,6 +9,11 @@ export default function (app: Application): void {
     fs.writeFileSync(certFile, process.env.CA_CERT);
   }
 
+  console.log(process.env.CA_CERT);
+  console.log(certFile);
+  const str = fs.readFileSync(certFile, 'utf8');
+  console.log(str);
+
   mongoose
     .connect(app.get("mongodb"), {
       useCreateIndex: true,
