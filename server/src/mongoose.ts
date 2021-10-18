@@ -13,6 +13,7 @@ export default function (app: Application): void {
     .connect(app.get("mongodb"), {
       useCreateIndex: true,
       useNewUrlParser: true,
+      tls: process.env.CA_CERT ? true : undefined,
       tlsCAFile: process.env.CA_CERT ? certFile : undefined,
     })
     .catch((err) => {
