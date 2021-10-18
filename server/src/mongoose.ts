@@ -5,6 +5,8 @@ import logger from "./logger";
 
 export default function (app: Application): void {
   const certFile = "./ca-certificate.crt";
+
+  console.log(fs.existsSync(certFile));
   if (process.env.CA_CERT && fs.existsSync(certFile) === false) {
     fs.writeFileSync(certFile, process.env.CA_CERT);
   }
@@ -19,8 +21,8 @@ export default function (app: Application): void {
     .connect(app.get("mongodb"), {
       useCreateIndex: true,
       useNewUrlParser: true,
-      tls: process.env.CA_CERT ? true : undefined,
-      tlsCAFile: process.env.CA_CERT ? certFile : undefined,
+      tls: true,
+      tlsCAFile: certFile,
     })
     .catch((err) => {
       logger.error(err);
