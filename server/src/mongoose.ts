@@ -7,9 +7,10 @@ export default function (app: Application): void {
   const certFile = "./ca-certificate.crt";
 
   console.log(fs.existsSync(certFile));
-  if (process.env.CA_CERT && fs.existsSync(certFile) === false) {
-    fs.writeFileSync(certFile, process.env.CA_CERT);
-  }
+  console.log(fs.unlinkSync(certFile));
+  // if (process.env.CA_CERT && fs.existsSync(certFile) === false) {
+  //   fs.writeFileSync(certFile, process.env.CA_CERT);
+  // }
 
   console.log(app.get("mongodb"));
   console.log(process.env.CA_CERT);
