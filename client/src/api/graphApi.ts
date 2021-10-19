@@ -2,7 +2,7 @@ import axios from "axios";
 import { Graph, GraphsResponse } from "../models/graph";
 
 const Routes = {
-  Root_Endpoint: "http://localhost:4030",
+  Root_Endpoint: window.location.hostname === "localhost" ? "http://localhost:4030" : "https://cba-dev-server-7kpre.ondigitalocean.app",
   Graph_Service: "/graph",
 };
 
