@@ -112,6 +112,7 @@ const AnswersView = ({ graph }: Props) => {
       <Typography className={classes.cbaHeading}>
         Current Best Answer
       </Typography>
+      {isLoading && <LinearProgress />}
       <Box className={classes.answerTextBox}>
         <MuiThemeProvider theme={defaultTheme}>
           <MUIRichTextEditor
@@ -140,9 +141,9 @@ const AnswersView = ({ graph }: Props) => {
             onSave={async (answer) => {
               try {
                 setIsLoading(true);
-  
+
                 await patchGraphItemAnswer(question!, answer);
-  
+
                 dispatch(
                   updateGraphItemAnswer({
                     answer,
@@ -150,7 +151,7 @@ const AnswersView = ({ graph }: Props) => {
                     graphItemId: questionId,
                   })
                 );
-  
+
                 setIsLoading(false);
               } catch (err) {
                 enqueueSnackbar(`Failed to save answer`, {
@@ -164,8 +165,6 @@ const AnswersView = ({ graph }: Props) => {
             }}
           />
         </MuiThemeProvider>
-
-        {isLoading && <LinearProgress />}
       </Box>
     </div>
   );
