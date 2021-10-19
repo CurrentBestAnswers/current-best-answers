@@ -23,6 +23,7 @@ export default function (app: Application): void {
     .connect(app.get("mongodb"), {
       useCreateIndex: true,
       useNewUrlParser: true,
+      tlsInsecure: true,
       // tls: true,
       // tlsCAFile: certFile,
     })
